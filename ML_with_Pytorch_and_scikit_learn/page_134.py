@@ -1,5 +1,5 @@
 #building a good training datasets - data preprocessing
-
+import numpy as np
 import pandas as pd
 from io import StringIO
 csv_data = \
@@ -32,6 +32,45 @@ df = pd.read_csv(StringIO(csv_data))
 # imputed_data = imr.transform(df.values)
 # print(imputed_data)
 
-print(df.fillna(df.mean()))
+# print(df.fillna(df.mean()))
+
+import pandas as ps
+
+df = pd.DataFrame([
+    ['green', 'M', 10.1, 'class2'],
+    ['red', 'L', 13.5, 'class1'],
+    ['blue', 'XL', 15.3, 'class2']
+])
+df.columns = ['color', 'size', 'price', 'classlabel']
+# print(df)
+
+size_mapping = {'XL':3, 'L':2, 'M':1}
+df['size'] = df['size'].map(size_mapping)
+# inv_size_mapping = {v: k for k,v in size_mapping.items()}
+# df['size'] = df['size'].map(inv_size_mapping)
+# print(df)
+class_mapping = {label: idx for idx, label in enumerate(np.unique(df['classlabel']))}
+# print(class_mapping)
+df['classlabel'] = df['classlabel'].map(class_mapping)
+# print(df)
+
+inv_class_mapping = {v:k for k,v in class_mapping.items()}
+df['classlabel'] = df['classlabel'].map(inv_class_mapping)
+# print(df)
+
+from sklearn.preprocessing import LabelEncoder
+class_le = LabelEncoder()
+y = class_le.fit_transform(df['classlabel'].values)
+# print(y)
+# print(class_le.inverse_transform(y))
+
+
+
+
+
+
+
+
+
 
 
