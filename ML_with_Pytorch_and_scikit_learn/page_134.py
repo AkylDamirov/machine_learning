@@ -49,13 +49,13 @@ df['size'] = df['size'].map(size_mapping)
 # inv_size_mapping = {v: k for k,v in size_mapping.items()}
 # df['size'] = df['size'].map(inv_size_mapping)
 # print(df)
-class_mapping = {label: idx for idx, label in enumerate(np.unique(df['classlabel']))}
+# class_mapping = {label: idx for idx, label in enumerate(np.unique(df['classlabel']))}
 # print(class_mapping)
-df['classlabel'] = df['classlabel'].map(class_mapping)
+# df['classlabel'] = df['classlabel'].map(class_mapping)
 # print(df)
 
-inv_class_mapping = {v:k for k,v in class_mapping.items()}
-df['classlabel'] = df['classlabel'].map(inv_class_mapping)
+# inv_class_mapping = {v:k for k,v in class_mapping.items()}
+# df['classlabel'] = df['classlabel'].map(inv_class_mapping)
 # print(df)
 
 from sklearn.preprocessing import LabelEncoder
@@ -64,13 +64,33 @@ y = class_le.fit_transform(df['classlabel'].values)
 # print(y)
 # print(class_le.inverse_transform(y))
 
+# Performing one-hot encoding on nominal features
+# X = df[['color', 'size', 'price']].values
+# color_le = LabelEncoder()
+# X[:, 0] = color_le.fit_transform(X[:, 0])
+# print(X)
 
+from sklearn.preprocessing import OneHotEncoder
+X = df[['color', 'size', 'price']].values
+color_ohe = OneHotEncoder()
+color_ohe.fit_transform(X[:, 0].reshape(-1, 1)).toarray()
+# print(color_ohe)
 
-
-
-
-
-
+from sklearn.compose import ColumnTransformer
+x = df[['color', 'size', 'price']].values
+c_transf = ColumnTransformer([
+    ('onehot', OneHotEncoder(), [0]),
+    ('nothing', 'passthrough', [1,2])
+])
+c_transf.fit_transform(X).astype(float)
+# print(pd.get_dummies(df[['price', 'color', 'size']]))
+# print(pd.get_dummies(df[['price', 'color', 'size']], drop_first=True))
+color_ohe = OneHotEncoder(categories='auto', drop='first')
+c_transf = ColumnTransformer([
+    ('onehot', color_ohe, [0]),
+    ('nothing', 'passthrough', [1,2])
+])
+print(c_transf.fit_transform(X).astype(float))
 
 
 
